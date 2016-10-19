@@ -1,11 +1,13 @@
-JXG.Options.board.showCopyright=false;
+define(['jsxgraph'], function(JXG) {
+    JXG.Options.board.showCopyright=false;
 
-var dx=0.1;
-var clickTime = 1000;
-var n_e_max = 3;
-var board = JXG.JSXGraph.initBoard('box', {boundingbox: [-4, 2, 4, -1.7],
-					   axis:false,});
-
+    var dx=0.1;
+    var clickTime = 1000;
+    var n_e_max = 3;
+    console.log( "testing", this );
+    var board = JXG.JSXGraph.initBoard('box', {boundingbox: [-4, 2, 4, -1.7],
+					       axis:false,});
+    
 var xaxis = board.create(
     'axis', [[0.0,0.0], [1.0, 0.0]],
     {ticks: {drawZero: true,
@@ -61,3 +63,4 @@ for(var i=0; i<n_e_max; i++) {
     });
 }
 
+});
