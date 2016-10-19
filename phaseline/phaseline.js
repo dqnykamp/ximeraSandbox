@@ -3,7 +3,6 @@ define(['jsxgraph'], function(JXG) {
     
     target.width("100%");
     target.height(300);
-    target.css('background-color','#DFE');
     
     JXG.Options.board.showCopyright=false;
 
