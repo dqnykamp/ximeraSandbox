@@ -1,12 +1,17 @@
 define(['jsxgraph'], function(JXG) {
+    var target = this;
+    
+    target.width("100%");
+    target.height(300);
+    target.css('background-color','#DFE');
+    
     JXG.Options.board.showCopyright=false;
 
     var dx=0.1;
     var clickTime = 1000;
     var n_e_max = 3;
-    console.log( "testing", this );
-    var board = JXG.JSXGraph.initBoard('box', {boundingbox: [-4, 2, 4, -1.7],
-					       axis:false,});
+    var board = JXG.JSXGraph.initBoard($(target).attr('id'), {boundingbox: [-4, 2, 4, -1.7],
+							      axis:false,});
     
 var xaxis = board.create(
     'axis', [[0.0,0.0], [1.0, 0.0]],
