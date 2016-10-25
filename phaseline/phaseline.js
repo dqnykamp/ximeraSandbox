@@ -1,9 +1,18 @@
-define(['jsxgraph'], function(JXG) {
+define(['jsxgraph', 'db'], function(JXG, db) {
     var target = this;
     
     target.width("100%");
     target.height(300);
     
+    // If I were to write db.x = 17, then I would automatically be saving the value of x = 17.
+    /*
+    Somewhere I should write
+    
+      db( function(event) { 
+        use db.x and db.y to update the objects displayed.
+      });
+      */
+	
     JXG.Options.board.showCopyright=false;
 
     var dx=0.1;
