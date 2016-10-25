@@ -4,15 +4,6 @@ define(['jsxgraph', 'db'], function(JXG, db) {
     target.width("100%");
     target.height(300);
     
-    // If I were to write db.x = 17, then I would automatically be saving the value of x = 17.
-    /*
-    Somewhere I should write
-    
-      db( function(event) { 
-        use db.x and db.y to update the objects displayed.
-      });
-      */
-	
     JXG.Options.board.showCopyright=false;
 
     var dx=0.1;
@@ -33,14 +24,18 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	'slider', [[-3,1.5], [-2,1.5], [0,0,n_e_max]],
 	{snapWidth:1, name: "n_e", precision: 0, withTicks: false,
 	});
+
+    db.n_e = n_e.Value();
     
+    var Es=[];
+
     n_e.on("drag", function () {
 	for(var i=0; i< n_e_max; i++) {
 	    Es[i].setAttribute({visible: i<this.Value()});
 	}
     });
-    
-    var Es=[];
+
+    db.E_state=[]
     
     for(var i=0; i<n_e_max; i++) {
 	
@@ -56,12 +51,18 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	E.mouseDownTime=0;
 	E.dragged=false;
 	E.stable=true
+	E.index = i
+
+	db.E_state.push({value: E.X(), stable: E.stable })
 	
 	// switch stability if click (i.e., up/down in less than clickTime)
 	E.on('down', function(e) {
 	    this.mouseDownTime=e.timeStamp; this.dragged=false;
 	});
-	E.on('drag', function() {this.dragged=true;});
+	E.on('drag', function() {
+	    this.dragged=true;
+	    db.E_state[this.index].value = this.X();
+	});
 	E.on('up', function(e) {
 	    if(e.timeStamp < this.mouseDownTime + clickTime && !this.dragged) {
 		this.stable = !this.stable;
@@ -71,8 +72,27 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 		else {
 		    this.setAttribute({fillOpacity: 0});
 		}
-		
+		db.E_state[this.index].stable = this.stable;
 	    }
 	});
     }
+
+    // callback if any variables from database are modified
+    db( function(event) {
+	
+	n_e.setValue(db.n_e);
+	for(var i=0; i< n_e_max; i++) {
+	    Es[i].setAttribute({visible: i< db.n_e});
+	    Es[i].coords.usrCoords=[1, db.E_state[i].value,0];
+	    Es[i].coords.usr2screen();
+	    Es[i].stable = db.E_state[i].stable;
+	    if(Es[i].stable) {
+		Es[i].setAttribute({fillOpacity: 1});
+	    }
+	    else {
+		Es[i].setAttribute({fillOpacity: 0});
+	    }
+	}
+	board.update();
+    });
 });
