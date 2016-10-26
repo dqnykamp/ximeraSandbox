@@ -25,17 +25,16 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	{snapWidth:1, name: "n_e", precision: 0, withTicks: false,
 	});
 
-    db.n_e = n_e.Value();
-    
     var Es=[];
 
     n_e.on("drag", function () {
 	for(var i=0; i< n_e_max; i++) {
 	    Es[i].setAttribute({visible: i<this.Value()});
 	}
+	db.n_e = n_e.Value();
     });
 
-    db.E_state=[]
+    E_state=[]
     
     for(var i=0; i<n_e_max; i++) {
 	
@@ -53,7 +52,7 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	E.stable=true
 	E.index = i
 
-	db.E_state.push({value: E.X(), stable: E.stable })
+	E_state.push({value: E.X(), stable: E.stable })
 	
 	// switch stability if click (i.e., up/down in less than clickTime)
 	E.on('down', function(e) {
@@ -61,7 +60,8 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	});
 	E.on('drag', function() {
 	    this.dragged=true;
-	    db.E_state[this.index].value = this.X();
+	    E_state[this.index].value = this.X();
+	    db.E_state=E_state
 	});
 	E.on('up', function(e) {
 	    if(e.timeStamp < this.mouseDownTime + clickTime && !this.dragged) {
@@ -72,15 +72,16 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 		else {
 		    this.setAttribute({fillOpacity: 0});
 		}
-		db.E_state[this.index].stable = this.stable;
+		E_state[this.index].stable = this.stable;
+		db.E_state=E_state
 	    }
 	});
     }
 
     // callback if any variables from database are modified
     db( function(event) {
-	
 	n_e.setValue(db.n_e);
+	E_state=db.E_state
 	for(var i=0; i< n_e_max; i++) {
 	    Es[i].setAttribute({visible: i< db.n_e});
 	    Es[i].coords.usrCoords=[1, db.E_state[i].value,0];
