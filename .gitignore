@@ -1,1 +1,14 @@
 *~
+*.4ct
+*.4tc
+*.aux
+*.auxlock
+*.dvi
+*.idv
+*.jax
+*.lg
+*.log
+*.oc
+*.out
+*.tmp
+*.xref
