@@ -55,7 +55,9 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 				       {boundingbox: [-4, 4, 4, -4],
 					axis: true});
 
-    var xs=[];
+    var xs_orig=[];  // coordinates of original position of points
+    var xs=[]; // coordinates of points after possible snapping to eigenvectors
+    
     var xpts=[];
     var xvecs=[];
     var Axpts=[];
@@ -67,6 +69,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	var color = colors[i % colors.length];
 
 	var x=[Math.cos(i), Math.sin(i)];
+	xs_orig.push(x);
 	xs.push(x);
 	
 	var xmag = Math.sqrt(x[0]*x[0]+x[1]*x[1]);
@@ -108,48 +111,53 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	xevecs.push(0);
     }
 
-    function update_vector_position(i) {
-	return function () {
-	    
-	    // if x[i] is close to an eigenvector,
-	    // then snap onto the eigenvector
-	    xs[i]=[xpts[i].X(),xpts[i].Y()];
-	    var xmag = Math.sqrt(xs[i][0]*xs[i][0]+xs[i][1]*xs[i][1]);
-	    xevecs[i]=0;
-	    
-	    if(real_evals) {
-		var proj = xs[i][0]*evect1[0]+xs[i][1]*evect1[1];
-		
-		if(Math.abs(proj)/xmag > snapThreshold) {
-		    xevecs[i]=1;
-		    xs[i][0] = evect1[0]*proj;
-		    xs[i][1] = evect1[1]*proj;
-		}
-		else {
-		    proj = xs[i][0]*evect2[0]+xs[i][1]*evect2[1];
-		    if(Math.abs(proj)/xmag > snapThreshold) {
-			xevecs[i]=2;
-			xs[i][0] = evect2[0]*proj;
-			xs[i][1] = evect2[1]*proj;
-		    }
-		}
-		xpts[i].coords.usrCoords=[1, xs[i][0], xs[i][1]];
-		xpts[i].coords.usr2screen();
-	    }
 
-	    xpts[i].update();
-	    Axpts[i].update();
-
-	    check_found_evects()
-	    //update_Axtext(i);
-
-	    db.xs=xs;
-	    db.xevecs = xevecs;
-	    db.found_evect1=found_evect1;
-	    db.found_evect2=found_evect2;
-	}
+    // initialize db.xs_orig array if doesn't exist
+    if(db.xs_orig === undefined) {
+	db.xs_orig = xs_orig;
     }
+    
 
+    
+    function update_vector_position(i) {
+	
+	// xs_orig[i] contains the original position of point
+	// copy to xs[i],
+	// check to see if xs[i] is close to an eigenvector
+	// if close, snap xs[i] to the eigenvector
+	// move the actually point xpts[i] on graph to position of xs[i]
+
+	xs[i] = xs_orig[i];
+	var xmag = Math.sqrt(xs[i][0]*xs[i][0]+xs[i][1]*xs[i][1]);
+	xevecs[i]=0;
+	
+	if(real_evals) {
+	    var proj = xs[i][0]*evect1[0]+xs[i][1]*evect1[1];
+	    
+	    if(Math.abs(proj)/xmag > snapThreshold) {
+		xevecs[i]=1;
+		xs[i][0] = evect1[0]*proj;
+		xs[i][1] = evect1[1]*proj;
+	    }
+	    else {
+		proj = xs[i][0]*evect2[0]+xs[i][1]*evect2[1];
+		if(Math.abs(proj)/xmag > snapThreshold) {
+		    xevecs[i]=2;
+		    xs[i][0] = evect2[0]*proj;
+		    xs[i][1] = evect2[1]*proj;
+		}
+	    }
+	}
+	xpts[i].coords.usrCoords=[1, xs[i][0], xs[i][1]];
+	xpts[i].coords.usr2screen();
+
+	xpts[i].update();
+	Axpts[i].update();
+
+	check_found_evects()
+	//update_Axtext(i);
+
+    }
 
     function check_found_evects() {
 
@@ -168,24 +176,36 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     }
 
 
+    /*
     for(var i=0; i<n_vectors; i++ ) {
-	xpts[i].on('drag', update_vector_position(i));
+	xpts[i].on('drag', function() {
+	    db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+	});
     }
-
+    */
+    for(var i=0; i<n_vectors; i++ ) {
+	xpts[i].on('drag', update_db(i));
+    }
+    function update_db(i) {
+	return function () {
+	    console.log("update " + i);
+	    console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
+	    db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
+	}
+    }
+       
     calculate_eigs();
 
 
     // callback if any variables from database are modified
     db( function(event) {
-	xs = db.xs;
-	xevecs = db.xevecs;
-	found_evect1=db.found_evect1;
-	found_evect2=db.found_evect2;
-	
 	for(var i=0; i<n_vectors; i++ ) {
-	    xpts[i].coords.usrCoords=[1,xs[i][0],xs[i][1]];
-	    xpts[i].coords.usr2screen();
-
+	    console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
+	    if(xs_orig[i] != db.xs_orig[i]) {
+		xs_orig[i] = db.xs_orig[i];
+		update_vector_position(i);
+	    }
 	}
 	board.update();
     });
