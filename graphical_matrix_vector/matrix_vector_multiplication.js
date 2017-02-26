@@ -193,7 +193,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	    if(!db.xs_orig) {
 		db.xs_orig=[]
 		for(var j=0; j<n_vectors; j++) {
-		    db.xs_orig.push = [xpts[j].X(), xpts[j].Y()];
+		    db.xs_orig.push([xpts[j].X(), xpts[j].Y()]);
 		}
 	    }
 	    else {
