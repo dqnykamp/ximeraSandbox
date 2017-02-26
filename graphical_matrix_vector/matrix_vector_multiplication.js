@@ -189,7 +189,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     function update_db(i) {
 	return function () {
 	    console.log("update " + i);
-	    console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
+
 	    if(!db.xs_orig) {
 		db.xs_orig=[]
 		for(var j=0; j<n_vectors; j++) {
@@ -197,7 +197,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 		}
 	    }
 	    else {
-		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+		console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
 	    }
 	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
 	}
