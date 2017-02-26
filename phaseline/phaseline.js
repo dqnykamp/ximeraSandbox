@@ -1,4 +1,6 @@
 define(['jsxgraph', 'db'], function(JXG, db) {
+    'use strict';
+    
     var target = this;
     
     target.width("100%");
@@ -34,7 +36,7 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 	db.n_e = n_e.Value();
     });
 
-    E_state=[]
+    var E_state=[]
     
     for(var i=0; i<n_e_max; i++) {
 	
@@ -80,18 +82,20 @@ define(['jsxgraph', 'db'], function(JXG, db) {
 
     // callback if any variables from database are modified
     db( function(event) {
-	n_e.setValue(db.n_e);
+	n_e.setValue(db.n_e ? db.n_e : 0);
 	E_state=db.E_state
-	for(var i=0; i< n_e_max; i++) {
-	    Es[i].setAttribute({visible: i< db.n_e});
-	    Es[i].coords.usrCoords=[1, db.E_state[i].value,0];
-	    Es[i].coords.usr2screen();
-	    Es[i].stable = db.E_state[i].stable;
-	    if(Es[i].stable) {
-		Es[i].setAttribute({fillOpacity: 1});
-	    }
-	    else {
-		Es[i].setAttribute({fillOpacity: 0});
+	if(E_state) {
+	    for(var i=0; i< n_e_max; i++) {
+		Es[i].setAttribute({visible: i< db.n_e});
+		Es[i].coords.usrCoords=[1, db.E_state[i].value,0];
+		Es[i].coords.usr2screen();
+		Es[i].stable = db.E_state[i].stable;
+		if(Es[i].stable) {
+		    Es[i].setAttribute({fillOpacity: 1});
+		}
+		else {
+		    Es[i].setAttribute({fillOpacity: 0});
+		}
 	    }
 	}
 	board.update();
