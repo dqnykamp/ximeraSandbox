@@ -184,7 +184,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     }
     */
     for(var i=0; i<n_vectors; i++ ) {
-	xpts[i].on('drag', function() {update_vector_position(i);  update_db(i)});
+	xpts[i].on('drag', function() {update_vector_position(i); update_db(i)});
     }
     function update_db(i) {
 	return function () {
@@ -212,6 +212,8 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	if(db.xs_orig) {
 	    console.log(db.xs_orig);
 	    for(var i=0; i<n_vectors; i++ ) {
+		console.log(xs_orig);
+		console.log(xs);
 		console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
 		if(xs_orig[i] != db.xs_orig[i]) {
 		    xs_orig[i] = db.xs_orig[i];
