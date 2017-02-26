@@ -190,16 +190,16 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	return function () {
 	    console.log("update " + i);
 
-	    if(!db.xs_orig) {
+	    //if(!db.xs_orig) {
 		db.xs_orig=[]
 		for(var j=0; j<n_vectors; j++) {
 		    db.xs_orig.push([xpts[j].X(), xpts[j].Y()]);
 		}
 		console.log(db.xs_orig);
-	    }
-	    else {
-		console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
-	    }
+	    // }
+	    // else {
+	    // 	console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+	    // }
 	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
 	}
     }
