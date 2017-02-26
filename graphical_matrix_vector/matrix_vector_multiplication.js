@@ -113,9 +113,9 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 
 
     // initialize db.xs_orig array if doesn't exist
-    if(db.xs_orig === undefined) {
-	db.xs_orig = xs_orig;
-    }
+    //if(db.xs_orig === undefined) {
+    //  db.xs_orig = xs_orig;
+    //}
     
 
     
@@ -190,7 +190,15 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	return function () {
 	    console.log("update " + i);
 	    console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
-	    db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+	    if(!db.xs_orig) {
+		db.xs_orig=[]
+		for(var j=0; j<n_vectors; j++) {
+		    db.xs_orig.push = [xpts[j].X(), xpts[j].Y()];
+		}
+	    }
+	    else {
+		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+	    }
 	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
 	}
     }
@@ -200,14 +208,16 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 
     // callback if any variables from database are modified
     db( function(event) {
-	for(var i=0; i<n_vectors; i++ ) {
-	    console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
-	    if(xs_orig[i] != db.xs_orig[i]) {
-		xs_orig[i] = db.xs_orig[i];
-		update_vector_position(i);
+	if(db.xs_orig) {
+	    for(var i=0; i<n_vectors; i++ ) {
+		console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
+		if(xs_orig[i] != db.xs_orig[i]) {
+		    xs_orig[i] = db.xs_orig[i];
+		    update_vector_position(i);
+		}
 	    }
+	    board.update();
 	}
-	board.update();
     });
 
 
