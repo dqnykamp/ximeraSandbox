@@ -195,7 +195,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 		for(var j=0; j<n_vectors; j++) {
 		    db.xs_orig.push([xpts[j].X(), xpts[j].Y()]);
 		}
-		console.log(db.x_orig);
+		console.log(db.xs_orig);
 	    }
 	    else {
 		console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
@@ -210,7 +210,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     // callback if any variables from database are modified
     db( function(event) {
 	if(db.xs_orig) {
-	    console.log(db.x_orig);
+	    console.log(db.xs_orig);
 	    for(var i=0; i<n_vectors; i++ ) {
 		console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
 		if(xs_orig[i] != db.xs_orig[i]) {
