@@ -126,10 +126,8 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	// check to see if xs[i] is close to an eigenvector
 	// if close, snap xs[i] to the eigenvector
 	// move the actually point xpts[i] on graph to position of xs[i]
-	console.log(i);
-	console.log(xs);
 	xs[i] = xs_orig[i];
-	console.log(xs);
+	
 	var xmag = Math.sqrt(xs[i][0]*xs[i][0]+xs[i][1]*xs[i][1]);
 	xevecs[i]=0;
 	
@@ -190,19 +188,16 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     }
     function update_db_and_vector(i) {
 	return function () {
-	    console.log("update " + i);
 
 	    if(!db.xs_orig) {
 		db.xs_orig=[]
 		for(var j=0; j<n_vectors; j++) {
 		    db.xs_orig.push([xpts[j].X(), xpts[j].Y()]);
 		}
-		console.log(db.xs_orig);
 	    }
 	    else {
-		console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
+		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
 	    }
-	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
 
 	    // update vector position immediately
 	    xs_orig[i] = db.xs_orig[i];
@@ -217,11 +212,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     // callback if any variables from database are modified
     db( function(event) {
 	if(db.xs_orig) {
-	    console.log(db.xs_orig);
 	    for(var i=0; i<n_vectors; i++ ) {
-		console.log(xs_orig);
-		console.log(xs);
-		console.log(xs_orig[i][0] + ", " + xs_orig[i][1] + ", " + db.xs_orig[i][0] + ", " + db.xs_orig[i][1]);
 		if(xs_orig[i] != db.xs_orig[i]) {
 		    xs_orig[i] = db.xs_orig[i];
 		    update_vector_position(i);
