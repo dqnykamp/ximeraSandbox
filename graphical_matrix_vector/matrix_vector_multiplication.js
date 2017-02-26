@@ -186,14 +186,12 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
     }
     */
     for(var i=0; i<n_vectors; i++ ) {
-	xpts[i].on('drag',update_db(i));
+	xpts[i].on('drag',update_db_and_vector(i));
     }
-    function update_db(i) {
+    function update_db_and_vector(i) {
 	return function () {
 	    console.log("update " + i);
 
-	    update_vector_position(i);
-	    
 	    if(!db.xs_orig) {
 		db.xs_orig=[]
 		for(var j=0; j<n_vectors; j++) {
@@ -205,6 +203,11 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 		console.log("before: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);		db.xs_orig[i] = [xpts[i].X(), xpts[i].Y()];
 	    }
 	    console.log("after: " + db.xs_orig[i][0] + "," + db.xs_orig[i][1]);
+
+	    // update vector position immediately
+	    xs_orig[i] = db.xs_orig[i];
+	    update_vector_position(i);
+	    
 	}
     }
        
