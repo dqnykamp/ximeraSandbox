@@ -126,8 +126,10 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	// check to see if xs[i] is close to an eigenvector
 	// if close, snap xs[i] to the eigenvector
 	// move the actually point xpts[i] on graph to position of xs[i]
-
+	console.log(i);
+	console.log(xs);
 	xs[i] = xs_orig[i];
+	console.log(xs);
 	var xmag = Math.sqrt(xs[i][0]*xs[i][0]+xs[i][1]*xs[i][1]);
 	xevecs[i]=0;
 	
