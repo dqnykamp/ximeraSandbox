@@ -125,7 +125,7 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 	// copy to xs[i],
 	// check to see if xs[i] is close to an eigenvector
 	// if close, snap xs[i] to the eigenvector
-	// move the actually point xpts[i] on graph to position of xs[i]
+	// move the actual point xpts[i] on graph to position of xs[i]
 	xs[i] = xs_orig[i];
 	
 	var xmag = Math.sqrt(xs[i][0]*xs[i][0]+xs[i][1]*xs[i][1]);
@@ -173,6 +173,8 @@ define(['jsxgraph', 'db', 'numeric'], function(JXG, db, numeric) {
 		found_evect2=true;
 	    }
 	}
+	db.found_evect1=found_evect1;
+	db.found_evect2=found_evect2;
     }
 
 
